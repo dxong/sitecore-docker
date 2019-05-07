@@ -125,14 +125,11 @@ $hostFileName = 'c:\\windows\\system32\\drivers\\etc\\hosts'; '\"`r`n127.0.0.1`t
 Write-Host "Succesfully updated hostfile!" -ForegroundColor Green
 
 #Modify the certificate with the new hostnames
-[X509Certificate[]]$certificates = Get-ChildItem -Path 'cert:\localmachine\my' -DnsName 'sitecore-docker-devonly';
+[X509Certificate[]]$certificates = Get-ChildItem -Path 'cert:\localmachine\root' -DnsName 'sitecore-docker-devonly';
 [X509Certificate]$rootCert = $certificates[0];
 Write-Host "Creating a new certificate with hostnames $commerceHostname"
-[X509Certificate]$certificate = New-SelfSignedCertificate -certstorelocation cert:\localmachine\my -dnsname $commerceHostname -Signer $rootcert 
--KeyUsage CertSign,CRLSign,DataEncipherment,DigitalSignature,KeyAgreement,KeyEncipherment `
--KeyExportPolicy Exportable `
--Provider "Microsoft Strong Cryptographic Provider" `
--HashAlgorithm "SHA256";
+[X509Certificate]$certificate = New-SelfSignedCertificate -certstorelocation cert:\localmachine\my -dnsname $commerceHostname -Signer $rootcert -KeyUsage CertSign,CRLSign,DataEncipherment,DigitalSignature,KeyAgreement,KeyEncipherment -Provider "Microsoft Strong Cryptographic Provider" `
+-HashAlgorithm "SHA256"
 Write-Host "Succesfully created the certificate!. Updating bindings..." -ForegroundColor Green
 
 UpdateBindingCertificate -certificate $certificate -bindingName 'CommerceOps_Sc9' -port 5015
