@@ -128,7 +128,9 @@ Write-Host "Succesfully updated hostfile!" -ForegroundColor Green
 [X509Certificate[]]$certificates = Get-ChildItem -Path 'cert:\localmachine\my' -DnsName 'DO_NOT_TRUST_SitecoreRootCert';
 [X509Certificate]$rootCert = $certificates[0];
 Write-Host "Creating a new certificate with hostnames $commerceHostname"
-[X509Certificate]$certificate = New-SelfSignedCertificate -certstorelocation cert:\localmachine\my -dnsname $commerceHostname -Signer $rootcert -KeyExportPolicy Exportable -Provider 'Microsoft Enhanced RSA and AES Cryptographic Provider';
+[X509Certificate]$certificate = New-SelfSignedCertificate -certstorelocation cert:\localmachine\my -dnsname $commerceHostname -Signer $rootcert -KeyExportPolicy Exportable `
+-Provider "Microsoft Strong Cryptographic Provider" `
+-HashAlgorithm "SHA256";
 Write-Host "Succesfully created the certificate!. Updating bindings..." -ForegroundColor Green
 
 UpdateBindingCertificate -certificate $certificate -bindingName 'CommerceOps_Sc9' -port 5015
